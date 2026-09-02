@@ -7,31 +7,45 @@ import {
   HiOutlineLogout,
   HiOutlineHome,
   HiOutlineDocumentText,
-  HiOutlineCloudDownload
+  HiOutlineCloudDownload,
+  HiOutlineBookOpen
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
+import { useMode } from '../context/ModeContext';
 import Logo from '../images/logo.png';
+
+const studentMenuItems = [
+  { path: '/', label: 'Обзор', icon: <HiOutlineHome size={20} />, exact: true },
+  { path: '/students', label: 'Студенты', icon: <HiOutlineUsers size={20} /> },
+  { path: '/news', label: 'Новости', icon: <HiOutlineNewspaper size={20} /> },
+  { path: '/task', label: 'Уроки', icon: <HiOutlineClipboardCheck size={20} /> },
+  { path: '/groups', label: 'Группы', icon: <HiOutlineFolderOpen size={20} /> },
+  { path: '/homeworks', label: 'Домашние задания', icon: <HiOutlineDocumentText size={20} /> },
+  { path: '/resources', label: 'Ресурсы', icon: <HiOutlineCloudDownload size={20} /> },
+];
+
+const academyMenuItems = [
+  { path: '/academy', label: 'Обзор', icon: <HiOutlineHome size={20} />, exact: true },
+  { path: '/academy/students', label: 'Студенты', icon: <HiOutlineUsers size={20} /> },
+  { path: '/academy/courses', label: 'Курсы', icon: <HiOutlineBookOpen size={20} /> },
+];
 
 const DashboardLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { mode, switchMode } = useMode();
 
-  const isActive = (path) => location.pathname === path;
-
-  const menuItems = [
-    { path: '/', label: 'Обзор', icon: <HiOutlineHome size={20} />, exact: true },
-    { path: '/students', label: 'Студенты', icon: <HiOutlineUsers size={20} /> },
-    { path: '/news', label: 'Новости', icon: <HiOutlineNewspaper size={20} /> },
-    { path: '/task', label: 'Уроки', icon: <HiOutlineClipboardCheck size={20} /> },
-    { path: '/groups', label: 'Группы', icon: <HiOutlineFolderOpen size={20} /> },
-    { path: '/homeworks', label: 'Домашние задания', icon: <HiOutlineDocumentText size={20} /> },
-    { path: '/resources', label: 'Ресурсы', icon: <HiOutlineCloudDownload size={20} /> },
-  ];
+  const menuItems = mode === 'academy' ? academyMenuItems : studentMenuItems;
 
   const isActiveRoute = (path, exact) => {
     if (exact) return location.pathname === path;
     return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
+
+  const handleModeSwitch = (next) => {
+    switchMode(next);
+    navigate(next === 'academy' ? '/academy' : '/', { replace: true });
   };
 
   return (
@@ -71,6 +85,32 @@ const DashboardLayout = () => {
           ))}
         </nav>
 
+        {/* MODE TOGGLE — Student / Academy */}
+        <div className="px-4 pb-4">
+          <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
+            <button
+              onClick={() => handleModeSwitch('student')}
+              className={`flex-1 px-2 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${
+                mode === 'student'
+                  ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-900/40'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Student
+            </button>
+            <button
+              onClick={() => handleModeSwitch('academy')}
+              className={`flex-1 px-2 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${
+                mode === 'academy'
+                  ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-900/40'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Academy
+            </button>
+          </div>
+        </div>
+
         {/* ADMIN PROFILE */}
         <div className="p-4 border-t border-white/10 bg-[#0F172A]">
           <div className="flex items-center gap-3 p-2 rounded-xl bg-white/5">
@@ -96,7 +136,7 @@ const DashboardLayout = () => {
         {/* Header */}
         <header className="z-10 flex items-center justify-between h-16 px-10 bg-white border-b shadow-sm border-slate-200">
           <h2 className="text-sm font-bold tracking-widest uppercase text-slate-800">
-            {menuItems.find(i => isActiveRoute(i.path, i.exact))?.label || 'Обзор'}
+            {menuItems.find(i => isActiveRoute(i.path, i.exact))?.label || (mode === 'academy' ? 'Курсы' : 'Обзор')}
           </h2>
           
           <div className="flex items-center gap-6">

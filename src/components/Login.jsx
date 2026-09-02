@@ -1,32 +1,30 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FiEye, FiEyeOff, FiLock, FiMail } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiLock, FiPhone } from 'react-icons/fi';
 import Logo from '../images/logo.png';
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    setTimeout(() => {
-      const result = login(email, password);
-      if (result.success) {
-        navigate('/', { replace: true });
-      } else {
-        setError(result.message);
-      }
-      setLoading(false);
-    }, 400);
+    const result = await login(phone, password);
+    if (result.success) {
+      navigate('/', { replace: true });
+    } else {
+      setError(result.message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -56,22 +54,22 @@ export default function Login() {
           )}
 
           <div className="space-y-4">
-            {/* Email Input */}
+            {/* Telefon Input */}
             <div>
               <label className="block mb-2 text-xs font-semibold tracking-wider uppercase text-slate-600">
-                Email
+                Телефон
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                  <FiMail size={18} />
+                  <FiPhone size={18} />
                 </div>
                 <input
-                  type="email"
+                  type="text"
                   required
                   className="block w-full py-3 pl-10 pr-4 text-sm font-medium transition-all duration-200 border border-slate-200 rounded-2xl bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb] focus:bg-white"
-                  placeholder="example@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="+998 90 123 45 67"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
             </div>

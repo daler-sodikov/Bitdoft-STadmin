@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "./config";
 
 const api = axios.create({
-  baseURL: "https://studentappbackend-1.onrender.com/api", // Replace with your API base URL
+  baseURL: API_BASE_URL,
   timeout: 8000, // Anti-hang protection
   headers: {
     Accept: "application/json",
