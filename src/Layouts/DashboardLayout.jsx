@@ -1,33 +1,47 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  HiOutlineUsers, 
-  HiOutlineNewspaper, 
-  HiOutlineClipboardCheck, 
+import {
+  HiOutlineUsers,
+  HiOutlineNewspaper,
+  HiOutlineClipboardCheck,
   HiOutlineFolderOpen,
   HiOutlineLogout,
   HiOutlineHome,
   HiOutlineDocumentText,
-  HiOutlineCloudDownload
+  HiOutlineCloudDownload,
+  HiOutlineAcademicCap,
+  HiOutlineUserGroup,
+  HiOutlineSwitchHorizontal
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
+import { useMode } from '../context/ModeContext';
 import Logo from '../images/logo.png';
+
+const OFFLINE_ITEMS = [
+  { path: '/', label: 'Обзор', icon: <HiOutlineHome size={20} />, exact: true },
+  { path: '/students', label: 'Студенты', icon: <HiOutlineUsers size={20} /> },
+  { path: '/news', label: 'Новости', icon: <HiOutlineNewspaper size={20} /> },
+  { path: '/task', label: 'Уроки', icon: <HiOutlineClipboardCheck size={20} /> },
+  { path: '/groups', label: 'Группы', icon: <HiOutlineFolderOpen size={20} /> },
+  { path: '/homeworks', label: 'Домашние задания', icon: <HiOutlineDocumentText size={20} /> },
+  { path: '/resources', label: 'Ресурсы', icon: <HiOutlineCloudDownload size={20} /> },
+];
+
+const ACADEMY_ITEMS = [
+  { path: '/academy/courses', label: 'Курсы', icon: <HiOutlineAcademicCap size={20} />, exact: true },
+  { path: '/academy/students', label: 'Пользователи', icon: <HiOutlineUserGroup size={20} /> },
+];
+
+const MODE_LABEL = { offline: 'Bitsoft', academy: 'Академия' };
 
 const DashboardLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { mode } = useMode();
 
   const isActive = (path) => location.pathname === path;
 
-  const menuItems = [
-    { path: '/', label: 'Обзор', icon: <HiOutlineHome size={20} />, exact: true },
-    { path: '/students', label: 'Студенты', icon: <HiOutlineUsers size={20} /> },
-    { path: '/news', label: 'Новости', icon: <HiOutlineNewspaper size={20} /> },
-    { path: '/task', label: 'Уроки', icon: <HiOutlineClipboardCheck size={20} /> },
-    { path: '/groups', label: 'Группы', icon: <HiOutlineFolderOpen size={20} /> },
-    { path: '/homeworks', label: 'Домашние задания', icon: <HiOutlineDocumentText size={20} /> },
-    { path: '/resources', label: 'Ресурсы', icon: <HiOutlineCloudDownload size={20} /> },
-  ];
+  const menuItems = mode === 'academy' ? ACADEMY_ITEMS : OFFLINE_ITEMS;
 
   const isActiveRoute = (path, exact) => {
     if (exact) return location.pathname === path;
@@ -49,10 +63,21 @@ const DashboardLayout = () => {
           </div>
         </div>
 
+        {/* SECTION SWITCHER */}
+        <button
+          onClick={() => navigate('/mode')}
+          className="flex items-center justify-between mx-4 mt-4 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-indigo-500/40 hover:bg-white/10 transition-all group"
+        >
+          <span className="text-xs font-bold text-white uppercase tracking-widest">
+            {MODE_LABEL[mode] || 'Bitsoft'}
+          </span>
+          <HiOutlineSwitchHorizontal size={16} className="text-slate-500 group-hover:text-indigo-400" />
+        </button>
+
         {/* NAVIGATION */}
         <nav className="flex-1 px-4 mt-6 space-y-1">
           <p className="px-4 text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-4">Управление</p>
-          
+
           {menuItems.map((item) => (
             <Link 
               key={item.path}
