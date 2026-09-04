@@ -10,7 +10,7 @@ import {
   HiOutlineCloudDownload,
   HiOutlineAcademicCap,
   HiOutlineUserGroup,
-  HiOutlineSwitchHorizontal
+  HiOutlineIdentification
 } from 'react-icons/hi';
 import { useAuth } from '../context/AuthContext';
 import { useMode } from '../context/ModeContext';
@@ -29,15 +29,14 @@ const OFFLINE_ITEMS = [
 const ACADEMY_ITEMS = [
   { path: '/academy/courses', label: 'Курсы', icon: <HiOutlineAcademicCap size={20} />, exact: true },
   { path: '/academy/students', label: 'Пользователи', icon: <HiOutlineUserGroup size={20} /> },
+  { path: '/academy/teachers', label: 'Преподаватели', icon: <HiOutlineIdentification size={20} /> },
 ];
-
-const MODE_LABEL = { offline: 'Bitsoft', academy: 'Академия' };
 
 const DashboardLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { mode } = useMode();
+  const { mode, setMode } = useMode();
 
   const isActive = (path) => location.pathname === path;
 
@@ -49,11 +48,18 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] font-sans text-[#334155]">
-      
+    <div className="relative flex min-h-screen overflow-hidden font-sans text-[#334155]">
+
+      {/* AMBIENT BACKDROP — the colour the glass panels blur against */}
+      <div className="fixed inset-0 -z-10 bg-[#EEF2FF]">
+        <div className="absolute rounded-full -top-40 -left-32 w-[32rem] h-[32rem] bg-indigo-400/40 blur-3xl" />
+        <div className="absolute rounded-full top-1/3 -right-24 w-[28rem] h-[28rem] bg-violet-400/30 blur-3xl" />
+        <div className="absolute rounded-full bottom-0 left-1/4 w-[26rem] h-[26rem] bg-sky-300/30 blur-3xl" />
+      </div>
+
       {/* SIDEBAR */}
-      <aside className="w-72 bg-[#0F172A] flex flex-col sticky top-0 h-screen">
-        
+      <aside className="w-72 bg-slate-900/70 backdrop-blur-2xl border-r border-white/10 flex flex-col sticky top-0 h-screen shadow-2xl shadow-slate-900/20">
+
         {/* LOGO */}
         <div className="flex items-center h-20 px-6 border-b border-white/10">
           <img src={Logo} alt="Logo" className="object-contain mr-3 w-9 h-9" />
@@ -63,28 +69,41 @@ const DashboardLayout = () => {
           </div>
         </div>
 
-        {/* SECTION SWITCHER */}
-        <button
-          onClick={() => navigate('/mode')}
-          className="flex items-center justify-between mx-4 mt-4 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-indigo-500/40 hover:bg-white/10 transition-all group"
-        >
-          <span className="text-xs font-bold text-white uppercase tracking-widest">
-            {MODE_LABEL[mode] || 'Bitsoft'}
-          </span>
-          <HiOutlineSwitchHorizontal size={16} className="text-slate-500 group-hover:text-indigo-400" />
-        </button>
+        {/* SECTION TABS */}
+        <div className="flex mx-4 mt-4 p-1 rounded-lg bg-white/5 backdrop-blur-md border border-white/10">
+          <button
+            onClick={() => { setMode('offline'); navigate('/'); }}
+            className={`flex-1 px-3 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${
+              mode !== 'academy'
+                ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Bitsoft
+          </button>
+          <button
+            onClick={() => { setMode('academy'); navigate('/academy/courses'); }}
+            className={`flex-1 px-3 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${
+              mode === 'academy'
+                ? 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Академия
+          </button>
+        </div>
 
         {/* NAVIGATION */}
         <nav className="flex-1 px-4 mt-6 space-y-1">
           <p className="px-4 text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-4">Управление</p>
 
           {menuItems.map((item) => (
-            <Link 
+            <Link
               key={item.path}
-              to={item.path} 
+              to={item.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                isActiveRoute(item.path, item.exact) 
-                ? 'bg-gradient-to-r from-indigo-500/20 to-violet-500/20 text-white border-l-4 border-indigo-400' 
+                isActiveRoute(item.path, item.exact)
+                ? 'bg-white/10 backdrop-blur-md text-white border-l-4 border-indigo-400'
                 : 'text-slate-400 hover:bg-white/5 hover:text-white'
               }`}
             >
@@ -97,8 +116,8 @@ const DashboardLayout = () => {
         </nav>
 
         {/* ADMIN PROFILE */}
-        <div className="p-4 border-t border-white/10 bg-[#0F172A]">
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-white/5">
+        <div className="p-4 border-t border-white/10">
+          <div className="flex items-center gap-3 p-2 rounded-xl bg-white/5 backdrop-blur-md border border-white/5">
             <div className="flex items-center justify-center w-10 h-10 text-xs font-bold text-white rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
               B
             </div>
@@ -119,23 +138,23 @@ const DashboardLayout = () => {
       {/* MAIN CONTENT AREA */}
       <main className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="z-10 flex items-center justify-between h-16 px-10 bg-white border-b shadow-sm border-slate-200">
+        <header className="z-10 flex items-center justify-between h-16 px-10 bg-white/50 backdrop-blur-xl border-b border-white/60 shadow-sm shadow-slate-900/5">
           <h2 className="text-sm font-bold tracking-widest uppercase text-slate-800">
             {menuItems.find(i => isActiveRoute(i.path, i.exact))?.label || 'Обзор'}
           </h2>
-          
+
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 backdrop-blur-md border border-white/50">
                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                <span className="text-[11px] font-bold text-slate-500 uppercase">Система онлайн</span>
             </div>
           </div>
         </header>
-        
+
         {/* Content */}
-        <section className="flex-1 overflow-y-auto bg-[#F8FAFC] p-8 lg:p-12">
+        <section className="flex-1 overflow-y-auto p-8 lg:p-12">
           <div className="max-w-[1600px] mx-auto">
-            <Outlet /> 
+            <Outlet />
           </div>
         </section>
       </main>

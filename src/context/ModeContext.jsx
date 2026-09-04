@@ -5,7 +5,7 @@ const ModeContext = createContext(null);
 const MODE_KEY = 'admin_mode';
 
 export function ModeProvider({ children }) {
-  const [mode, setModeState] = useState(() => localStorage.getItem(MODE_KEY));
+  const [mode, setModeState] = useState(() => localStorage.getItem(MODE_KEY) || 'offline');
 
   const setMode = (value) => {
     localStorage.setItem(MODE_KEY, value);

@@ -30,8 +30,13 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12 bg-gradient-to-br from-[#F3F7FA] via-white to-[#EAF2F8] sm:px-6 lg:px-8">
-      <div className="w-full max-w-md p-8 bg-white border shadow-xl md:p-10 rounded-3xl shadow-slate-200/50 border-slate-100/80 backdrop-blur-sm">
+    <div className="relative flex items-center justify-center min-h-screen px-4 py-12 overflow-hidden bg-[#EEF2FF] sm:px-6 lg:px-8">
+      {/* Ambient glow behind the glass card */}
+      <div className="absolute rounded-full -top-32 -left-24 w-96 h-96 bg-indigo-400/40 blur-3xl" />
+      <div className="absolute rounded-full -bottom-32 -right-24 w-96 h-96 bg-violet-400/40 blur-3xl" />
+      <div className="absolute rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] bg-sky-300/30 blur-3xl" />
+
+      <div className="relative w-full max-w-md p-8 bg-white/40 border shadow-2xl md:p-10 rounded-3xl shadow-indigo-900/10 border-white/50 backdrop-blur-2xl">
         {/* Logotip va Sarlavha */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3">

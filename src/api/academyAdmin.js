@@ -64,6 +64,28 @@ export const academyAdmin = {
 
   deleteCourse: (id) => unwrap(api.delete(`/academy/admin/courses/${id}`)),
 
+  // --- Teachers ---------------------------------------------------------------
+  listTeachers: (params) => unwrap(api.get('/academy/admin/teachers', { params })),
+
+  getTeacher: (id) => unwrap(api.get(`/academy/admin/teachers/${id}`)),
+
+  createTeacher: (data) => unwrap(api.post('/academy/admin/teachers', data)),
+
+  /** Uploads a teacher's photo to R2 and returns its public URL. */
+  uploadTeacherPhoto: (file) => {
+    const form = new FormData();
+    form.append('file', file);
+    return unwrap(
+      api.post('/academy/admin/teachers/photo', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }),
+    );
+  },
+
+  updateTeacher: (id, data) => unwrap(api.patch(`/academy/admin/teachers/${id}`, data)),
+
+  deleteTeacher: (id) => unwrap(api.delete(`/academy/admin/teachers/${id}`)),
+
   // --- Curriculum -----------------------------------------------------------
   createModule: (courseId, data) =>
     unwrap(api.post(`/academy/admin/courses/${courseId}/modules`, data)),
